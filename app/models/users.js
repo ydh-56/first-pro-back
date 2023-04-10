@@ -18,4 +18,53 @@ module.exports = class usersModel {
       logger.writeLog("error", `usersModel/create Error : ${error}`);
     }
   }
+
+  static async login(userId) {
+    try {
+      const [rows, fields] = await pool.query(
+        `
+        SELECT
+          USER_SEQ,
+          USER_ID,
+          NICKNAME,
+          PWD_HINT
+        FROM 
+          USER_TABLE
+        WHERE USER_ID = ?
+          `,
+        [userId]
+      );
+      if (rows) {
+        return rows[0];
+      } else {
+        return null;
+      }
+    } catch (error) {
+      logger.writeLog("error", `usersModel/create Error : ${error}`);
+    }
+  }
+
+  static async userIdCheck(userId) {
+    try {
+      const [rows, fields] = await pool.query(
+        `
+        SELECT
+          USER_SEQ,
+          USER_ID,
+          NICKNAME
+        FROM 
+          USER_TABLE
+        WHERE USER_ID = ?
+          `,
+        [userId]
+      );
+      if (rows) {
+        return rows[0];
+      } else {
+        return null;
+      }
+    } catch (error) {
+      logger.writeLog("error", `usersModel/create Error : ${error}`);
+    }
+  }
 };
