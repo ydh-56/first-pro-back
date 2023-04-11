@@ -22,4 +22,18 @@ module.exports = class diaryModel {
       logger.writeLog("error", `diaryModel/create Error : ${error}`);
     }
   }
+
+  static async get(userCode, content, emoji1, emoji2, emoji3, type) {
+    try {
+      let query = `SELECT * FROM DIARY_TABLE`;
+      const [rows, fields] = await pool.query(query, [type, content, emoji1, emoji2, emoji3, userCode, userCode]);
+      if (rows) {
+        return rows;
+      } else {
+        return null;
+      }
+    } catch (error) {
+    logger.writeLog("error", `diaryModel/create Error : ${error}`);
+  }
+}
 };

@@ -22,4 +22,17 @@ module.exports = {
       data: result,
     });
   },
+
+  async get(req,res,next) {
+    let userCode = req.body.userCode;
+    let content = req.body.content;
+    let type = req.body.type;
+
+    const result = await diaryModel.get(userCode, content, emoji1, emoji2, emoji3, type);
+
+    return res.json({
+      result: result ? "success" : "fail",
+      data: result
+    })
+  }
 };
