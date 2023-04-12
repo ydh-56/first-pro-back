@@ -6,7 +6,9 @@ const diary = require("../app/controllers/diary");
 // route -> controller -> model 순서
 // 글 생성
 router.post("/create", diary.create);
-// 마이페이지에서 글 가져오기
-router.post("/get", diary.get);
+// 마이페이지에 특정 유저 글 불러오기
+router.post("/allMyDairy", diary.allMyDairy);
+// 메인페이지에 모든 유저 글 불러오기
 router.post("/list", diary.list);
+
 module.exports = router;

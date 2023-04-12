@@ -9,7 +9,15 @@ module.exports = class diaryModel {
       INSERT INTO DIARY_TABLE(DIARY_CODE, TYPE, CONTENT, EMOJI1, EMOJI2, EMOJI3, C_ID, C_TIME, U_ID, U_TIME, ACTIVE) 
           VALUES (get_code('DR'), ?, ?, ?, ?, ?, ?, NOW(), ?, NOW(), 'Y')
           `;
-      const [rows, fields] = await pool.query(query, [type, content, emoji1, emoji2, emoji3, userCode, userCode]);
+      const [rows, fields] = await pool.query(query, [
+        type,
+        content,
+        emoji1,
+        emoji2,
+        emoji3,
+        userCode,
+        userCode,
+      ]);
       // query [] 이 부분엔 컨트롤러에서 받아온 순서가 아닌 쿼리 순서대로 넣어야 함 중요 **
       // 쿼리에서 받아온 값 넣어주기 ex) 리스트 일경우 if(rows.lenght > 0) ex)하나의 값일경우 return rows[0]
       if (rows) {
@@ -23,7 +31,7 @@ module.exports = class diaryModel {
     }
   }
 
-  static async get(diaryCode) {
+  static async allMyDairy(userSEQ, type) {
     try {
       let query = `
         SELECT 
@@ -42,24 +50,26 @@ module.exports = class diaryModel {
             INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
         WHERE 
             A.ACTIVE='Y' AND 
-            A.DIARY_CODE = ?;
+            B.USER_SEQ = ? AND
+            A.TYPE = ?;
       `;
-      const [rows, fields] = await pool.query(query, [diaryCode]);
-      if (rows[0]) {
-        return rows[0];
+      const [rows, fields] = await pool.query(query, [userSEQ, type]);
+      if (rows.length > 0) {
+        return rows;
       } else {
         return null;
       }
     } catch (error) {
-    logger.writeLog("error", `diaryModel/get Error : ${error}`);
+      logger.writeLog("error", `diaryModel/get Error : ${error}`);
+    }
   }
-}
 
-  static async list(diaryCode,userCode,nickname,cTime,pfp) {
+  static async list(type) {
     try {
       let query = `
         SELECT
           A.DIARY_CODE,
+          B.USER_SEQ,
           B.USER_ID,
           B.NICKNAME,
           A.TYPE,
@@ -70,19 +80,19 @@ module.exports = class diaryModel {
           A.C_TIME,
           A.ACTIVE
         FROM DIARY_TABLE A
-          INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
+          INNER JOIN USER_TABLE B ON B.USER_SEQ = A.C_ID
         WHERE
           A.ACTIVE='Y' AND
-          A.DIARY_CODE = ?;
+          A.TYPE = ?;
       `;
-    const [rows, fields] = await pool.query(query, [diaryCode]);
-    if (rows[0]) {
-      return rows[0];
-    } else {
-      return null;
+      const [rows, fields] = await pool.query(query, [type]);
+      if (rows.length > 0) {
+        return rows;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      logger.writeLog("error", `diaryModel/get Error : ${error}`);
     }
-  } catch (error) {
-    logger.writeLog("error",`diaryModel/get Error : ${error}`);
-    }
-  };
-}
+  }
+};
