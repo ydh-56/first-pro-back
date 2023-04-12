@@ -6,7 +6,7 @@ const diary = require("../app/controllers/diary");
 // route -> controller -> model 순서
 // 글 생성
 router.post("/create", diary.create);
-// 글 가져오기
+// 마이페이지에서 글 가져오기
 router.post("/get", diary.get);
-
+router.post("/list", diary.list);
 module.exports = router;

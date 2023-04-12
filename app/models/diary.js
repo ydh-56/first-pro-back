@@ -23,17 +23,66 @@ module.exports = class diaryModel {
     }
   }
 
-  static async get(userCode, content, emoji1, emoji2, emoji3, type) {
+  static async get(diaryCode) {
     try {
-      let query = `SELECT * FROM DIARY_TABLE`;
-      const [rows, fields] = await pool.query(query, [type, content, emoji1, emoji2, emoji3, userCode, userCode]);
-      if (rows) {
-        return rows;
+      let query = `
+        SELECT 
+            A.DIARY_CODE,
+            B.USER_SEQ,
+            B.USER_ID,
+            B.NICKNAME,
+            A.TYPE,
+            A.CONTENT,
+            A.EMOJI1,
+            A.EMOJI2,
+            A.C_ID,
+            A.C_TIME,
+            A.ACTIVE
+        FROM DIARY_TABLE A
+            INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
+        WHERE 
+            A.ACTIVE='Y' AND 
+            A.DIARY_CODE = ?;
+      `;
+      const [rows, fields] = await pool.query(query, [diaryCode]);
+      if (rows[0]) {
+        return rows[0];
       } else {
         return null;
       }
     } catch (error) {
-    logger.writeLog("error", `diaryModel/create Error : ${error}`);
+    logger.writeLog("error", `diaryModel/get Error : ${error}`);
   }
 }
-};
+
+  static async list(diaryCode,userCode,nickname,cTime,pfp) {
+    try {
+      let query = `
+        SELECT
+          A.DIARY_CODE,
+          B.USER_ID,
+          B.NICKNAME,
+          A.TYPE,
+          A.CONTENT,
+          A.EMOJI1,
+          A.EMOJI2,
+          A.C_ID,
+          A.C_TIME,
+          A.ACTIVE
+        FROM DIARY_TABLE A
+          INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
+        WHERE
+          A.ACTIVE='Y' AND
+          A.DIARY_CODE = ?;
+      `;
+    const [rows, fields] = await pool.query(query, [diaryCode]);
+    if (rows[0]) {
+      return rows[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    logger.writeLog("error",`diaryModel/get Error : ${error}`);
+    }
+  };
+}
