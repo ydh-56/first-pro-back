@@ -31,11 +31,11 @@ module.exports = {
   },
 
   // 마이페이지에 특정 유저 글 불러오기
-  async allMyDairy(req, res, next) {
+  async myDiary(req, res, next) {
     let userSEQ = req.body.userSEQ;
-    let type = req.body.type;
+    let type = req.body.type ?req.body.type : '';
 
-    const result = await diaryModel.get(userSEQ, type);
+    const result = await diaryModel.myDiary(userSEQ, type);
 
     return res.json({
       result: result ? "success" : "fail",

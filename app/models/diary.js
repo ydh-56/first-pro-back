@@ -31,7 +31,7 @@ module.exports = class diaryModel {
     }
   }
 
-  static async allMyDairy(userSEQ, type) {
+  static async myDiary(userSEQ, type) {
     try {
       let query = `
         SELECT 
@@ -50,10 +50,10 @@ module.exports = class diaryModel {
             INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
         WHERE 
             A.ACTIVE='Y' AND 
-            B.USER_SEQ = ? AND
-            A.TYPE = ?;
+            ${type == 'A' ? `AND TYPE='A'` : type == 'D' ? `AND TYPE='D'` : ''}
+            B.USER_SEQ = ?;
       `;
-      const [rows, fields] = await pool.query(query, [userSEQ, type]);
+      const [rows, fields] = await pool.query(query, [userSEQ,type]);
       if (rows.length > 0) {
         return rows;
       } else {
