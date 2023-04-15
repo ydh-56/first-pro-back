@@ -33,6 +33,7 @@ module.exports = class diaryModel {
 
   static async myDiary(userSEQ, type) {
     try {
+      console.log("여기는 모델",type)
       let query = `
         SELECT 
             A.DIARY_CODE,
@@ -49,11 +50,14 @@ module.exports = class diaryModel {
         FROM DIARY_TABLE A
             INNER JOIN USER_TABLE B ON A.C_ID = B.USER_SEQ
         WHERE 
-            A.ACTIVE='Y' AND 
-            ${type == 'A' ? `AND TYPE='A'` : type == 'D' ? `AND TYPE='D'` : ''}
-            B.USER_SEQ = ?;
+            A.ACTIVE='Y' 
+            ${type == 'A' ? `AND A.TYPE='A'` : type == 'D' ? `AND A.TYPE='D'` : ''}
+            AND B.USER_SEQ = ?
       `;
+      console.log('query', query)
       const [rows, fields] = await pool.query(query, [userSEQ,type]);
+      console.log("myDiary rows값",rows);
+
       if (rows.length > 0) {
         return rows;
       } else {
@@ -83,16 +87,17 @@ module.exports = class diaryModel {
           INNER JOIN USER_TABLE B ON B.USER_SEQ = A.C_ID
         WHERE
           A.ACTIVE='Y' AND
-          A.TYPE = ?;
+          A.TYPE = ?
       `;
       const [rows, fields] = await pool.query(query, [type]);
+      console.log("This is rows",rows)
       if (rows.length > 0) {
         return rows;
       } else {
         return null;
       }
     } catch (error) {
-      logger.writeLog("error", `diaryModel/get Error : ${error}`);
+      logger.writeLog("error", `diaryModel/list Error : ${error}`);
     }
   }
 };
