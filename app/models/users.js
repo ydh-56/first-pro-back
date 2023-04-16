@@ -26,6 +26,7 @@ module.exports = class usersModel {
         SELECT
           USER_SEQ,
           USER_ID,
+          USER_PWD,
           NICKNAME,
           PWD_HINT
         FROM 
