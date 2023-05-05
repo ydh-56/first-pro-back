@@ -3,7 +3,7 @@ const { sign } = require("jsonwebtoken");
 const secretKey = require("../../config/secretkey").secretKey;
 const { genSaltSync, hashSync, compareSync } = require("bcryptjs");
 const logger = require("../../config/logger");
-const options = require("../../config/secretkey").options;
+const options = require("../../config/secretkey").option;
 
 module.exports = {
   async create(req, res, next) {
